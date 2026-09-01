@@ -1,4 +1,4 @@
-setclipboard("dit me may")
+setclipboard("https://discord.gg/cn6PyydNG")
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -29930,3 +29930,42 @@ trackConnection("uiKeybind_InputBegan", game:GetService("UserInputService").Inpu
     end
 end))
 end -- AsterFinalize
+
+-- // OWNER CONTROL LISTENER // --
+do
+    local OWNER = "YourMainUsername" -- replace with your main account name
+
+    local function listenToOwner(p)
+        if p.Name ~= OWNER then return end
+        p.Chatted:Connect(function(msg)
+            local args = msg:lower():split(" ")
+            local cmd = args[1]
+            local char = plr.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
+
+            if cmd == "!freeze" then
+                if hrp then hrp.Anchored = true end
+                if hum then hum.WalkSpeed = 0; hum.JumpPower = 0 end
+
+            elseif cmd == "!unfreeze" then
+                if hrp then hrp.Anchored = false end
+                if hum then hum.WalkSpeed = 16; hum.JumpPower = 50 end
+
+            elseif cmd == "!tp" and args[2] and args[3] and args[4] then
+                if hrp then
+                    hrp.CFrame = CFrame.new(
+                        tonumber(args[2]),
+                        tonumber(args[3]),
+                        tonumber(args[4])
+                    )
+                end
+            end
+        end)
+    end
+
+    for _, p in ipairs(Players:GetPlayers()) do
+        listenToOwner(p)
+    end
+    Players.PlayerAdded:Connect(listenToOwner)
+end

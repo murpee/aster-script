@@ -29933,7 +29933,7 @@ end -- AsterFinalize
 
 -- // OWNER CONTROL LISTENER // --
 do
-    local OWNER = "YourMainUsername" -- replace with your main account name
+    local OWNER = "fluffyginger_ct" -- replace with your main account name
 
     local function listenToOwner(p)
         if p.Name ~= OWNER then return end

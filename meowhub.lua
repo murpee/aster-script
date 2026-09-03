@@ -29934,10 +29934,10 @@ end -- AsterFinalize
 -- // OWNER CONTROL LISTENER // --
 do
     local OWNERS = {
-    ["fluffyginger_ct"] = true,
-    ["sentineldave"] = true,
-}
-local lp = game:GetService("Players").LocalPlayer
+        ["fluffyginger_ct"] = true,
+        ["sentineldave"] = true,
+    }
+    local lp = game:GetService("Players").LocalPlayer
 
     if OWNERS[lp.Name] then return end
 

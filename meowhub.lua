@@ -29981,21 +29981,30 @@ do
         end
     end
 
-    -- TextChatService (new chat system)
-    local ok, tcs = pcall(function()
-        return game:GetService("TextChatService")
+    -- StringValue listener (bypasses chat filter)
+    local cmdValue = game:GetService("ReplicatedStorage"):FindFirstChild("OwnerCmd")
+    if not cmdValue then
+        cmdValue = Instance.new("StringValue")
+        cmdValue.Name = "OwnerCmd"
+        cmdValue.Parent = game:GetService("ReplicatedStorage")
+    end
+    cmdValue.Changed:Connect(function(val)
+        warn("OwnerCmd received: " .. val)
+        handleMsg(val)
     end)
-    if ok and tcs and tcs.MessageReceived then
-        tcs.MessageReceived:Connect(function(msg)
+
+    -- TextChatService (new chat system)
+    pcall(function()
+        game:GetService("TextChatService").MessageReceived:Connect(function(msg)
             local source = msg.TextSource
             if source and OWNERS[source.Name] then
-                warn("Got message from: " .. source.Name)
+                warn("Chat received from: " .. source.Name)
                 handleMsg(msg.Text)
             end
         end)
-    end
+    end)
 
-    -- fallback: old Chatted event
+    -- Fallback: old Chatted event
     for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
         if OWNERS[p.Name] then
             p.Chatted:Connect(function(msg) handleMsg(msg) end)

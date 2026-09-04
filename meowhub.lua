@@ -29935,7 +29935,7 @@ end -- AsterFinalize
 do
     local OWNERS = {
         ["fluffyginger_ct"] = true,
-        ["sentineldave"] = true,
+        ["SentinelDave"] = true,
     }
 
     local PRESETS = {

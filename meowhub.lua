@@ -5804,13 +5804,13 @@ ALL_HEAL_FRUIT_NAMES = ALL_HEAL_FRUIT_NAMES or {
     "Apple", "Banana", "Barley", "Berry", "Bloodfruit", "Bluefruit", "Blossom",
     "Carrot", "Cloudberry", "Coconut", "Corn", "Cooked Meat", "Frostfruit",
     "Jelly", "Lemon", "Mango", "Oddberry", "Orange", "Prickly Pear", "Pumpkin",
-    "Strangefruit", "Strawberry", "Sunfruit", "Watermelon",
+    "Strangefruit", "Strawberry", "Sunfruit", "Watermelon", "Petrified Fruit",
 }
 
 PLANT_FRUIT_LIST = {
     "Frostfruit", "Mango", "Watermelon", "Bloodfruit", "Bluefruit", "Lemon", "Coconut", "Jelly",
     "Banana", "Orange", "Oddberry", "Berry", "Strangefruit", "Strawberry", "Sunfruit", "Pumpkin",
-    "Prickly Pear", "Apple", "Barley", "Cloudberry", "Carrot", "Corn", "Blossom",
+    "Prickly Pear", "Apple", "Barley", "Cloudberry", "Carrot", "Corn", "Blossom", "Petrified Fruit",
 }
 fruittoitemid = {}
 for _, fruitName in ipairs(ALL_HEAL_FRUIT_NAMES) do
